@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>py//run</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="app">
+
+  <div id="topbar">
+    <div id="brand">
+      <span class="dot-blue">py</span><span class="dot-yellow">//</span><span>run</span>
+      <span class="sub">in-browser Python · no server</span>
+    </div>
+    <div id="actions">
+      <button class="btn" id="downloadBtn" title="Download as main.py">⬇ .py</button>
+      <button class="btn" id="clearAllBtn" title="New file">＋ New</button>
+      <button class="btn" id="runBtn" disabled>▶ Loading…</button>
+    </div>
+  </div>
+
+  <div id="tabstrip">
+    <div class="tab">
+      <span class="unsaved" id="unsavedDot" style="opacity:0"></span>
+      main.py
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="editorPane"><div id="editor"></div></div>
+    <div id="divider"></div>
+    <div id="consolePane">
+      <div id="consoleHeader">
+        <span>Console</span>
+        <div class="console-actions">
+          <button class="iconBtn" id="copyOutputBtn" title="Copy output to clipboard">copy</button>
+          <button class="iconBtn" id="clearConsoleBtn" title="Clear console">clear</button>
+        </div>
+      </div>
+      <div id="output"></div>
+    </div>
+  </div>
+
+  <div id="statusbar" class="busy">
+    <span id="statusText">Booting Python runtime…</span>
+    <div class="right">
+      <span id="posText">Ln 1, Col 1</span>
+      <span>Python 3.11 · Pyodide</span>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script src="js/constants.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/runtime.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "py-run",
+  "version": "1.0.0",
+  "description": "In-browser Python IDE — Pyodide + Monaco Editor, no server required",
+  "scripts": {
+    "start": "npx serve . --no-clipboard"
+  },
+  "keywords": ["python", "pyodide", "monaco-editor", "browser-ide", "webassembly"],
+  "license": "MIT"
+}
