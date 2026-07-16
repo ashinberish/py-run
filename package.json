@@ -2,9 +2,15 @@
   "name": "py-run",
   "version": "1.0.0",
   "description": "In-browser Python IDE — Pyodide + Monaco Editor, no server required",
+  "type": "module",
   "scripts": {
-    "start": "npx serve . --no-clipboard"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "keywords": ["python", "pyodide", "monaco-editor", "browser-ide", "webassembly"],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
 }
