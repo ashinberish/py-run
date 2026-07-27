@@ -2,6 +2,7 @@ import { state } from './state.js';
 import { DEFAULT_CODE } from './constants.js';
 import { dom, markUnsaved } from './ui.js';
 import { boot, runCode } from './runtime.js';
+import { registerCompletionProviders } from './intellisense.js';
 
 export function initEditor() {
   require.config({
@@ -9,6 +10,8 @@ export function initEditor() {
   });
 
   require(['vs/editor/editor.main'], function () {
+    registerCompletionProviders(monaco);
+
     state.editor = monaco.editor.create(document.getElementById('editor'), {
       value: DEFAULT_CODE,
       language: 'python',

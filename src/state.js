@@ -5,4 +5,5 @@ export const state = {
   editor: null,
   unsaved: false,
   suppressUnsaved: false,
+  jediReady: false,
 };

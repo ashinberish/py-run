@@ -4,6 +4,7 @@ import {
   setStatus, appendSystem, appendLine, clearOutput,
   setRunBtnReady, setRunBtnBusy,
 } from './ui.js';
+import { initJedi } from './intellisense.js';
 
 export async function boot() {
   setStatus('Booting Python runtime…', true);
@@ -27,6 +28,12 @@ export async function boot() {
     appendSystem('Runtime ready. Press Run or ' + SHORTCUT_LABEL + '.');
     appendSystem('Tip: "import micropip; await micropip.install(\'pkg\')" to add packages.');
     setRunBtnReady();
+
+    // Load code intelligence (autocomplete, hover docs, signature help) in the
+    // background — the editor stays usable while this installs.
+    initJedi(state.pyodide)
+      .then(() => { state.jediReady = true; })
+      .catch((err) => console.warn('IntelliSense unavailable:', err));
   } catch (err) {
     setStatus('Failed to load runtime', false);
     appendLine('Failed to initialize Python runtime: ' + err, 'stderr');
