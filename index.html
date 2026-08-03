@@ -13,13 +13,22 @@
 
   <div id="topbar">
     <div id="brand">
+      <i data-lucide="square-terminal" class="brandIcon"></i>
       <span class="dot-blue">py</span><span class="dot-yellow">//</span><span>run</span>
       <span class="sub">in-browser Python · no server</span>
     </div>
     <div id="actions">
-      <button class="btn" id="downloadBtn" title="Download as main.py">⬇ .py</button>
-      <button class="btn" id="clearAllBtn" title="New file">＋ New</button>
-      <button class="btn" id="runBtn" disabled>▶ Loading…</button>
+      <label class="switchGroup" id="intelliGroup" title="Autocomplete, hover docs &amp; signature help, powered by jedi running inside Pyodide. Installs on first use.">
+        <i data-lucide="sparkles"></i>
+        <span>IntelliSense</span>
+        <span class="switch">
+          <input type="checkbox" id="intellisenseToggle" disabled />
+          <span class="switchTrack"></span>
+        </span>
+      </label>
+      <button class="btn" id="downloadBtn" title="Download as main.py"><i data-lucide="download"></i> .py</button>
+      <button class="btn" id="clearAllBtn" title="New file"><i data-lucide="file-plus"></i> New</button>
+      <button class="btn" id="runBtn" disabled>Loading…</button>
     </div>
   </div>
 
@@ -35,10 +44,10 @@
     <div id="divider"></div>
     <div id="consolePane">
       <div id="consoleHeader">
-        <span>Console</span>
+        <span><i data-lucide="square-terminal"></i> Console</span>
         <div class="console-actions">
-          <button class="iconBtn" id="copyOutputBtn" title="Copy output to clipboard">copy</button>
-          <button class="iconBtn" id="clearConsoleBtn" title="Clear console">clear</button>
+          <button class="iconBtn" id="copyOutputBtn" title="Copy output to clipboard"><i data-lucide="copy"></i></button>
+          <button class="iconBtn" id="clearConsoleBtn" title="Clear console"><i data-lucide="trash-2"></i></button>
         </div>
       </div>
       <div id="output"></div>

@@ -70,6 +70,29 @@ export async function initJedi(pyodide) {
   pyodide.runPython(PY_BRIDGE);
 }
 
+// Installing jedi costs a micropip download, so it only happens once, lazily,
+// the first time the user actually turns IntelliSense on.
+let jediInstall = null;
+
+export async function enableIntellisense(pyodide) {
+  state.intellisenseEnabled = true;
+  if (!jediInstall) {
+    jediInstall = initJedi(pyodide).then(() => {
+      state.jediReady = true;
+    });
+  }
+  try {
+    await jediInstall;
+  } catch (err) {
+    jediInstall = null; // allow retrying on the next toggle
+    throw err;
+  }
+}
+
+export function disableIntellisense() {
+  state.intellisenseEnabled = false;
+}
+
 function jediKindToMonacoKind(monaco, kind) {
   const K = monaco.languages.CompletionItemKind;
   switch (kind) {
@@ -100,7 +123,7 @@ export function registerCompletionProviders(monaco) {
   monaco.languages.registerCompletionItemProvider('python', {
     triggerCharacters: ['.'],
     provideCompletionItems(model, position) {
-      if (!state.pyodide || !state.jediReady) return { suggestions: [] };
+      if (!state.intellisenseEnabled || !state.pyodide || !state.jediReady) return { suggestions: [] };
 
       let items;
       try {
@@ -139,7 +162,7 @@ export function registerCompletionProviders(monaco) {
 
   monaco.languages.registerHoverProvider('python', {
     provideHover(model, position) {
-      if (!state.pyodide || !state.jediReady) return null;
+      if (!state.intellisenseEnabled || !state.pyodide || !state.jediReady) return null;
 
       const word = model.getWordAtPosition(position);
       if (!word) return null;
@@ -167,7 +190,7 @@ export function registerCompletionProviders(monaco) {
   monaco.languages.registerSignatureHelpProvider('python', {
     signatureHelpTriggerCharacters: ['(', ','],
     provideSignatureHelp(model, position) {
-      if (!state.pyodide || !state.jediReady) return null;
+      if (!state.intellisenseEnabled || !state.pyodide || !state.jediReady) return null;
 
       let sigs;
       try {

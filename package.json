@@ -8,9 +8,18 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "keywords": ["python", "pyodide", "monaco-editor", "browser-ide", "webassembly"],
+  "keywords": [
+    "python",
+    "pyodide",
+    "monaco-editor",
+    "browser-ide",
+    "webassembly"
+  ],
   "license": "MIT",
   "devDependencies": {
     "vite": "^6.0.0"
+  },
+  "dependencies": {
+    "lucide": "^1.28.0"
   }
 }

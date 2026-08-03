@@ -1,9 +1,14 @@
 import './style.css';
 
+import { createElement, Copy, Check } from 'lucide';
 import { state } from './state.js';
-import { dom, clearOutput, markSaved, copyText } from './ui.js';
+import { dom, clearOutput, markSaved, copyText, appendSystem } from './ui.js';
 import { runCode } from './runtime.js';
 import { initEditor } from './editor.js';
+import { enableIntellisense, disableIntellisense } from './intellisense.js';
+import { initIcons } from './icons.js';
+
+initIcons();
 
 // Run
 document.getElementById('runBtn').addEventListener('click', function () {
@@ -22,9 +27,29 @@ document.getElementById('copyOutputBtn').addEventListener('click', function () {
     .map(function (el) { return el.textContent; })
     .join('\n');
   copyText(lines).then(function () {
-    btn.textContent = '✓ copied';
-    setTimeout(function () { btn.textContent = 'copy'; }, 1500);
+    btn.innerHTML = '';
+    btn.appendChild(createElement(Check));
+    setTimeout(function () {
+      btn.innerHTML = '';
+      btn.appendChild(createElement(Copy));
+    }, 1500);
   });
+});
+
+// IntelliSense toggle — off by default; installs jedi into Pyodide on first enable
+dom.intellisenseToggle.addEventListener('change', function () {
+  if (this.checked) {
+    appendSystem('Enabling IntelliSense (installing jedi via micropip)…');
+    enableIntellisense(state.pyodide).then(function () {
+      appendSystem('IntelliSense ready — autocomplete, hover docs, and signature help enabled.');
+    }).catch(function (err) {
+      appendSystem('Failed to enable IntelliSense: ' + err);
+      dom.intellisenseToggle.checked = false;
+    });
+  } else {
+    disableIntellisense();
+    appendSystem('IntelliSense disabled.');
+  }
 });
 
 // New file — confirm if there are unsaved changes
