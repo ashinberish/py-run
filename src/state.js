@@ -7,4 +7,5 @@ export const state = {
   suppressUnsaved: false,
   jediReady: false,
   intellisenseEnabled: false,
+  pythonVersion: null,
 };

@@ -1,15 +1,38 @@
 import { state } from './state.js';
-import { SHORTCUT_LABEL } from './constants.js';
+import { SHORTCUT_LABEL, PYTHON_VERSIONS, pyodideScriptUrl, pyodideBaseUrl } from './constants.js';
 import {
   setStatus, appendSystem, appendLine, clearOutput,
-  setRunBtnReady, setRunBtnBusy, enableIntellisenseToggle,
+  setRunBtnReady, setRunBtnBusy, setRunBtnLoading,
+  enableIntellisenseToggle, enablePythonVersionSelect,
 } from './ui.js';
 
-export async function boot() {
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('Failed to load ' + src));
+    document.body.appendChild(script);
+  });
+}
+
+function pythonLabel(versionId) {
+  const entry = PYTHON_VERSIONS.find((v) => v.id === versionId);
+  return entry ? entry.python : versionId;
+}
+
+export async function boot(versionId) {
   setStatus('Booting Python runtime…', true);
-  appendSystem('Starting Pyodide (Python 3.11 via WebAssembly)…');
+  setRunBtnLoading();
+  appendSystem('Starting Pyodide (Python ' + pythonLabel(versionId) + ' via WebAssembly)…');
   try {
-    state.pyodide = await loadPyodide();
+    await loadScript(pyodideScriptUrl(versionId));
+    // Passing indexURL explicitly (we already know it — we just loaded the
+    // script from there) skips Pyodide's stack-trace-based path detection,
+    // which older Pyodide releases implement with a vendored UMD library
+    // that misbehaves next to Monaco's RequireJS loader on the same page.
+    state.pyodide = await loadPyodide({ indexURL: pyodideBaseUrl(versionId) });
+    state.pythonVersion = versionId;
 
     state.pyodide.setStdout({ batched: (s) => appendLine(s, 'stdout') });
     state.pyodide.setStderr({ batched: (s) => appendLine(s, 'stderr') });
@@ -28,6 +51,7 @@ export async function boot() {
     appendSystem('Tip: "import micropip; await micropip.install(\'pkg\')" to add packages.');
     setRunBtnReady();
     enableIntellisenseToggle();
+    enablePythonVersionSelect();
   } catch (err) {
     setStatus('Failed to load runtime', false);
     appendLine('Failed to initialize Python runtime: ' + err, 'stderr');
