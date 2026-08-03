@@ -10,8 +10,36 @@
   --yellow:     #ffd43b;
   --red:        #e5534b;
   --green:      #5fb87a;
+  --hover-bg:     #2a2b30;
+  --hover-border: #4a4b52;
+  --control-bg:   #3a3b41;
+  --switch-knob:  #cfd0d4;
+  --divider-hover: #2c2d32;
+  --overlay-hover: rgba(255, 255, 255, .06);
   --mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Consolas, monospace;
   --ui:   'Inter', system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg-app:     #f4f5f7;
+  --bg-panel:   #ffffff;
+  --bg-tab:     #eef0f2;
+  --bg-console: #fafbfc;
+  --border:     #dcdfe4;
+  --text-main:  #1b1c1f;
+  --text-dim:   #6b7078;
+  --blue:       #2f6fa3;
+  --yellow:     #b8860b;
+  --red:        #c0392b;
+  --green:      #248a4d;
+  --hover-bg:     #eef0f2;
+  --hover-border: #c7cbd1;
+  --control-bg:   #d7dade;
+  --switch-knob:  #ffffff;
+  --divider-hover: #e2e5e9;
+  --overlay-hover: rgba(0, 0, 0, .05);
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
@@ -86,8 +114,8 @@ button {
 
 .btn:hover {
   color: var(--text-main);
-  border-color: #4a4b52;
-  background: #2a2b30;
+  border-color: var(--hover-border);
+  background: var(--hover-bg);
 }
 
 .btn:disabled { opacity: .4; cursor: not-allowed; }
@@ -139,7 +167,7 @@ select.btn:hover:not(:disabled) { color: var(--text-main); }
 .switchTrack {
   position: absolute;
   inset: 0;
-  background: #3a3b41;
+  background: var(--control-bg);
   border-radius: 999px;
   transition: background .15s ease;
   pointer-events: none;
@@ -152,7 +180,7 @@ select.btn:hover:not(:disabled) { color: var(--text-main); }
   width: 13px;
   left: 2px;
   top: 2px;
-  background: #cfd0d4;
+  background: var(--switch-knob);
   border-radius: 50%;
   transition: transform .15s ease, background .15s ease;
 }
@@ -171,11 +199,43 @@ dialog#settingsDialog {
   box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
 }
 
-dialog#settingsDialog::backdrop {
-  background: rgba(0, 0, 0, .5);
+dialog#settingsDialog[open] {
+  display: flex;
+  flex-direction: column;
+  animation: dialogIn .18s ease;
 }
 
-.dialogForm { display: flex; flex-direction: column; }
+dialog#settingsDialog[open]::backdrop {
+  animation: backdropIn .18s ease;
+}
+
+dialog#settingsDialog.closing {
+  animation: dialogOut .15s ease forwards;
+}
+
+dialog#settingsDialog.closing::backdrop {
+  animation: backdropOut .15s ease forwards;
+}
+
+@keyframes dialogIn {
+  from { opacity: 0; transform: translateY(-8px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes dialogOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(-8px) scale(.97); }
+}
+
+@keyframes backdropIn {
+  from { background: rgba(0, 0, 0, 0); }
+  to   { background: rgba(0, 0, 0, .5); }
+}
+
+@keyframes backdropOut {
+  from { background: rgba(0, 0, 0, .5); }
+  to   { background: rgba(0, 0, 0, 0); }
+}
 
 .dialogHeader {
   display: flex;
@@ -204,7 +264,7 @@ dialog#settingsDialog::backdrop {
   transition: color .1s, background .1s;
 }
 
-.dialogHeader button:hover { color: var(--text-main); background: rgba(255, 255, 255, .06); }
+.dialogHeader button:hover { color: var(--text-main); background: var(--overlay-hover); }
 
 .dialogBody {
   display: flex;
@@ -253,7 +313,7 @@ label.settingRow { cursor: pointer; }
 }
 
 #runBtn:hover:not(:disabled) { filter: brightness(1.12); }
-#runBtn:disabled { background: #33343a; color: var(--text-dim); }
+#runBtn:disabled { background: var(--border); color: var(--text-dim); }
 
 /* OS-aware keyboard shortcut badge inside Run button */
 .shortcut {
@@ -337,7 +397,7 @@ label.settingRow { cursor: pointer; }
 }
 
 #divider:hover,
-#divider.dragging { background: #2c2d32; }
+#divider.dragging { background: var(--divider-hover); }
 
 #consolePane {
   flex: 1 1 40%;
@@ -393,7 +453,7 @@ label.settingRow { cursor: pointer; }
 
 .iconBtn:hover {
   color: var(--text-main);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--overlay-hover);
 }
 
 #output {
@@ -433,7 +493,7 @@ label.settingRow { cursor: pointer; }
 
 /* ---- Scrollbars ---- */
 ::-webkit-scrollbar              { width: 10px; height: 10px; }
-::-webkit-scrollbar-thumb        { background: #3a3b41; border-radius: 5px; }
+::-webkit-scrollbar-thumb        { background: var(--control-bg); border-radius: 5px; }
 ::-webkit-scrollbar-track        { background: transparent; }
 
 /* ---- Mobile ---- */

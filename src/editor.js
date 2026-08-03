@@ -27,10 +27,12 @@ export function initEditor() {
   require(['vs/editor/editor.main'], function () {
     registerCompletionProviders(monaco);
 
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+
     state.editor = monaco.editor.create(document.getElementById('editor'), {
       value: loadSavedCode() ?? DEFAULT_CODE,
       language: 'python',
-      theme: 'vs-dark',
+      theme: isLight ? 'vs' : 'vs-dark',
       fontFamily: "'JetBrains Mono', 'Fira Code', ui-monospace, Consolas, monospace",
       fontSize: 14,
       lineHeight: 22,
