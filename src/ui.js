@@ -1,13 +1,15 @@
+import { createElement, Play, LoaderCircle } from 'lucide';
 import { state } from './state.js';
 import { SHORTCUT_LABEL, SHORTCUT_TITLE } from './constants.js';
 
 export const dom = {
-  runBtn:     document.getElementById('runBtn'),
-  statusbar:  document.getElementById('statusbar'),
-  statusText: document.getElementById('statusText'),
-  posText:    document.getElementById('posText'),
-  output:     document.getElementById('output'),
-  unsavedDot: document.getElementById('unsavedDot'),
+  runBtn:             document.getElementById('runBtn'),
+  statusbar:          document.getElementById('statusbar'),
+  statusText:         document.getElementById('statusText'),
+  posText:            document.getElementById('posText'),
+  output:             document.getElementById('output'),
+  unsavedDot:         document.getElementById('unsavedDot'),
+  intellisenseToggle: document.getElementById('intellisenseToggle'),
 };
 
 export function setStatus(text, busy) {
@@ -41,14 +43,27 @@ export function markSaved() {
 
 export function setRunBtnReady() {
   dom.runBtn.disabled = false;
-  dom.runBtn.innerHTML =
-    '&#9654; Run <span class="shortcut">' + SHORTCUT_LABEL + '</span>';
+  dom.runBtn.innerHTML = '';
+  dom.runBtn.appendChild(createElement(Play));
+  dom.runBtn.appendChild(document.createTextNode(' Run '));
+  const shortcut = document.createElement('span');
+  shortcut.className = 'shortcut';
+  shortcut.textContent = SHORTCUT_LABEL;
+  dom.runBtn.appendChild(shortcut);
   dom.runBtn.title = 'Run (' + SHORTCUT_TITLE + ')';
 }
 
 export function setRunBtnBusy() {
   dom.runBtn.disabled = true;
-  dom.runBtn.textContent = '⏳ Running…';
+  dom.runBtn.innerHTML = '';
+  const spinner = createElement(LoaderCircle);
+  spinner.classList.add('spin');
+  dom.runBtn.appendChild(spinner);
+  dom.runBtn.appendChild(document.createTextNode(' Running…'));
+}
+
+export function enableIntellisenseToggle() {
+  dom.intellisenseToggle.disabled = false;
 }
 
 // Clipboard helper with execCommand fallback for file:// contexts

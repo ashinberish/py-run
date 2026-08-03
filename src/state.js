@@ -6,4 +6,5 @@ export const state = {
   unsaved: false,
   suppressUnsaved: false,
   jediReady: false,
+  intellisenseEnabled: false,
 };

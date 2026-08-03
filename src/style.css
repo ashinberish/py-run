@@ -55,6 +55,8 @@ html, body {
 #brand .dot-blue   { color: var(--blue); }
 #brand .dot-yellow { color: var(--yellow); }
 
+#brand .brandIcon { color: var(--blue); width: 17px; height: 17px; stroke-width: 2.25; }
+
 #brand .sub {
   font-family: var(--ui);
   font-weight: 400;
@@ -99,6 +101,81 @@ button {
 }
 
 .btn:disabled { opacity: .4; cursor: not-allowed; }
+
+.btn svg,
+.iconBtn svg,
+.switchGroup svg,
+#consoleHeader svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.25;
+  flex-shrink: 0;
+}
+
+.spin { animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- IntelliSense toggle ---- */
+.switchGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  cursor: pointer;
+  user-select: none;
+  transition: color .12s ease, border-color .12s ease;
+}
+
+.switchGroup svg { color: var(--yellow); }
+
+.switchGroup:has(input:checked) { color: var(--text-main); border-color: #4a4b52; }
+.switchGroup:has(input:disabled) { opacity: .5; cursor: not-allowed; }
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: inherit;
+}
+
+.switchTrack {
+  position: absolute;
+  inset: 0;
+  background: #3a3b41;
+  border-radius: 999px;
+  transition: background .15s ease;
+  pointer-events: none;
+}
+
+.switchTrack::before {
+  content: '';
+  position: absolute;
+  height: 13px;
+  width: 13px;
+  left: 2px;
+  top: 2px;
+  background: #cfd0d4;
+  border-radius: 50%;
+  transition: transform .15s ease, background .15s ease;
+}
+
+.switch input:checked + .switchTrack { background: var(--blue); }
+.switch input:checked + .switchTrack::before { transform: translateX(13px); background: #fff; }
 
 #runBtn {
   background: linear-gradient(90deg, var(--blue), #3f7aa8);
@@ -216,6 +293,12 @@ button {
   flex-shrink: 0;
 }
 
+#consoleHeader > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .console-actions {
   display: flex;
   align-items: center;
@@ -223,6 +306,9 @@ button {
 }
 
 .iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
   color: var(--text-dim);
@@ -232,7 +318,7 @@ button {
   letter-spacing: 0;
   font-weight: 600;
   font-family: var(--ui);
-  padding: 2px 6px;
+  padding: 4px 6px;
   border-radius: 4px;
   transition: color .1s, background .1s;
 }
