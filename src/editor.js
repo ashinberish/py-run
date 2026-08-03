@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { DEFAULT_CODE, DEFAULT_PYTHON_VERSION } from './constants.js';
-import { dom, markUnsaved } from './ui.js';
+import { dom, markUnsaved, syncPythonVersionSelect } from './ui.js';
 import { boot, runCode } from './runtime.js';
 import { registerCompletionProviders } from './intellisense.js';
 import { loadSavedCode, saveCode, loadSavedPythonVersion } from './persistence.js';
@@ -18,6 +18,7 @@ export function initEditor() {
   // the two are independent, so there's no reason to wait for Monaco first.
   const initialVersion = loadSavedPythonVersion() ?? DEFAULT_PYTHON_VERSION;
   dom.pythonVersionSelect.value = initialVersion;
+  syncPythonVersionSelect();
   boot(initialVersion);
 
   require.config({

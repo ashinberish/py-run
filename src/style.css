@@ -106,36 +106,99 @@ button {
   border-radius: 6px;
   font-size: 12.5px;
   font-weight: 600;
-  background: transparent;
+  background-color: transparent;
   color: var(--text-dim);
   border: 1px solid var(--border);
-  transition: all .12s ease;
+  transition: color .12s ease, border-color .12s ease, background-color .12s ease;
 }
 
 .btn:hover {
   color: var(--text-main);
   border-color: var(--hover-border);
-  background: var(--hover-bg);
+  background-color: var(--hover-bg);
 }
 
 .btn:disabled { opacity: .4; cursor: not-allowed; }
 
-select.btn {
-  appearance: none;
-  -webkit-appearance: none;
-  padding-right: 26px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238b8d93' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
+.btn.iconOnly { padding: 6px 8px; }
+
+/* ---- Custom select (used for the Python version picker) ----
+   A native <select>'s open/focus state can't be restyled to actually match
+   the rest of the UI — the browser owns that popup's chrome. This wraps a
+   hidden native <select> (kept as the source of truth for its value,
+   disabled state, and change event) with a fully custom trigger + popover
+   that IS themeable. */
+.customSelect { position: relative; }
+
+.customSelect-native {
+  position: absolute;
+  width: 0;
+  height: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
-select.btn:hover:not(:disabled) { color: var(--text-main); }
+.customSelectTrigger {
+  justify-content: space-between;
+  min-width: 172px;
+}
 
-.btn.iconOnly { padding: 6px 8px; }
+.customSelectTrigger:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 1px;
+}
+
+.customSelectMenu {
+  display: none;
+  flex-direction: column;
+  gap: 1px;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 100%;
+  z-index: 20;
+  padding: 4px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
+}
+
+.customSelectMenu.open {
+  display: flex;
+  animation: customSelectMenuIn .14s ease forwards;
+}
+
+@keyframes customSelectMenuIn {
+  from { opacity: 0; transform: translateY(-4px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.customSelectOption {
+  padding: 7px 10px;
+  border-radius: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-dim);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.customSelectOption:hover:not(.selected),
+.customSelectOption.active:not(.selected) {
+  background: var(--hover-bg);
+  color: var(--text-main);
+}
+
+.customSelectOption.selected {
+  background: var(--blue);
+  color: #fff;
+}
 
 .btn svg,
 .iconBtn svg,
-.settingLabel svg,
 .dialogHeader svg,
 #consoleHeader svg {
   width: 14px;
@@ -202,11 +265,11 @@ dialog#settingsDialog {
 dialog#settingsDialog[open] {
   display: flex;
   flex-direction: column;
-  animation: dialogIn .18s ease;
+  animation: dialogIn .18s ease forwards;
 }
 
 dialog#settingsDialog[open]::backdrop {
-  animation: backdropIn .18s ease;
+  animation: backdropIn .18s ease forwards;
 }
 
 dialog#settingsDialog.closing {
@@ -290,9 +353,6 @@ label.settingRow { cursor: pointer; }
   font-size: 13px;
   font-weight: 600;
 }
-
-.settingLabel > span:first-child { display: flex; align-items: center; gap: 6px; }
-.settingLabel svg { color: var(--yellow); }
 
 .settingHint {
   font-size: 11px;

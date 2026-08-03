@@ -1,6 +1,7 @@
 import { createElement, Play, LoaderCircle } from 'lucide';
 import { state } from './state.js';
 import { SHORTCUT_LABEL, SHORTCUT_TITLE } from './constants.js';
+import { enhanceSelect } from './customSelect.js';
 
 export const dom = {
   runBtn:              document.getElementById('runBtn'),
@@ -81,8 +82,19 @@ export function enableIntellisenseToggle() {
   dom.intellisenseToggle.disabled = false;
 }
 
+const pythonVersionSelectWidget = enhanceSelect(dom.pythonVersionSelect);
+
 export function enablePythonVersionSelect() {
   dom.pythonVersionSelect.disabled = false;
+  pythonVersionSelectWidget.sync();
+}
+
+// Call after setting dom.pythonVersionSelect.value programmatically — unlike
+// picking an option through the custom trigger itself (which calls sync()
+// directly), a plain `.value = ...` assignment doesn't fire a 'change' event
+// for the trigger to react to.
+export function syncPythonVersionSelect() {
+  pythonVersionSelectWidget.sync();
 }
 
 export function setPythonVersionLabel(label) {
