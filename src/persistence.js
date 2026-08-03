@@ -2,6 +2,7 @@
 // to a server, so "secure" here just means it never leaves the machine.
 const CODE_KEY = 'py-run:code';
 const VERSION_KEY = 'py-run:pythonVersion';
+const THEME_KEY = 'py-run:theme';
 
 export function loadSavedCode() {
   try {
@@ -30,6 +31,14 @@ export function loadSavedPythonVersion() {
 export function savePythonVersion(versionId) {
   try {
     localStorage.setItem(VERSION_KEY, versionId);
+  } catch (_) {
+    // ignore
+  }
+}
+
+export function saveTheme(theme) {
+  try {
+    localStorage.setItem(THEME_KEY, theme);
   } catch (_) {
     // ignore
   }

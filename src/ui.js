@@ -12,8 +12,10 @@ export const dom = {
   unsavedDot:          document.getElementById('unsavedDot'),
   settingsBtn:         document.getElementById('settingsBtn'),
   settingsDialog:      document.getElementById('settingsDialog'),
+  settingsCloseBtn:    document.getElementById('settingsCloseBtn'),
   intellisenseToggle:  document.getElementById('intellisenseToggle'),
   pythonVersionSelect: document.getElementById('pythonVersionSelect'),
+  themeToggle:         document.getElementById('themeToggle'),
 };
 
 export function setStatus(text, busy) {
@@ -85,6 +87,22 @@ export function enablePythonVersionSelect() {
 
 export function setPythonVersionLabel(label) {
   dom.pythonVersionText.textContent = label;
+}
+
+export function openSettingsDialog() {
+  dom.settingsDialog.classList.remove('closing');
+  dom.settingsDialog.showModal();
+}
+
+// Plays the .closing exit animation (see style.css) before actually closing
+// the <dialog>, instead of it just vanishing instantly.
+export function closeSettingsDialog() {
+  if (!dom.settingsDialog.open || dom.settingsDialog.classList.contains('closing')) return;
+  dom.settingsDialog.classList.add('closing');
+  dom.settingsDialog.addEventListener('animationend', function handler() {
+    dom.settingsDialog.classList.remove('closing');
+    dom.settingsDialog.close();
+  }, { once: true });
 }
 
 // Clipboard helper with execCommand fallback for file:// contexts

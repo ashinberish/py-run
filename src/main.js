@@ -2,12 +2,12 @@ import './style.css';
 
 import { createElement, Copy, Check } from 'lucide';
 import { state } from './state.js';
-import { dom, clearOutput, markSaved, copyText, appendSystem } from './ui.js';
+import { dom, clearOutput, markSaved, copyText, appendSystem, openSettingsDialog, closeSettingsDialog } from './ui.js';
 import { runCode } from './runtime.js';
 import { initEditor } from './editor.js';
 import { enableIntellisense, disableIntellisense } from './intellisense.js';
 import { initIcons } from './icons.js';
-import { savePythonVersion } from './persistence.js';
+import { savePythonVersion, saveTheme } from './persistence.js';
 
 initIcons();
 
@@ -39,11 +39,41 @@ document.getElementById('copyOutputBtn').addEventListener('click', function () {
 
 // Settings dialog
 dom.settingsBtn.addEventListener('click', function () {
-  dom.settingsDialog.showModal();
+  openSettingsDialog();
+});
+
+dom.settingsCloseBtn.addEventListener('click', function () {
+  closeSettingsDialog();
 });
 
 dom.settingsDialog.addEventListener('click', function (e) {
-  if (e.target === dom.settingsDialog) dom.settingsDialog.close();
+  if (e.target === dom.settingsDialog) closeSettingsDialog();
+});
+
+// Intercept Escape so it plays the closing animation too, instead of the
+// dialog just vanishing via the browser's default <dialog> cancel behavior.
+dom.settingsDialog.addEventListener('cancel', function (e) {
+  e.preventDefault();
+  closeSettingsDialog();
+});
+
+// Theme — applied instantly; the inline script in index.html's <head>
+// already set data-theme before first paint, so just reflect it here.
+function applyTheme(isLight) {
+  if (isLight) {
+    document.documentElement.setAttribute('data-theme', 'light');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+  if (window.monaco) {
+    monaco.editor.setTheme(isLight ? 'vs' : 'vs-dark');
+  }
+}
+
+dom.themeToggle.checked = document.documentElement.getAttribute('data-theme') === 'light';
+dom.themeToggle.addEventListener('change', function () {
+  applyTheme(this.checked);
+  saveTheme(this.checked ? 'light' : 'dark');
 });
 
 // Python version — Pyodide has no in-place version switch, and different
