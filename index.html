@@ -17,23 +17,10 @@
       <span class="dot-blue">py</span><span class="dot-yellow">//</span><span>run</span>
     </div>
     <div id="actions">
-      <select class="btn" id="pythonVersionSelect" title="Python version (switching restarts the runtime)" disabled>
-        <option value="v0.25.1">Python 3.11</option>
-        <option value="v0.27.2">Python 3.12</option>
-        <option value="v0.29.3" selected>Python 3.13</option>
-        <option value="dev">Python 3.14 (pre-release)</option>
-      </select>
-      <label class="switchGroup" id="intelliGroup" title="Autocomplete, hover docs &amp; signature help, powered by jedi running inside Pyodide. Installs on first use.">
-        <i data-lucide="sparkles"></i>
-        <span>IntelliSense</span>
-        <span class="switch">
-          <input type="checkbox" id="intellisenseToggle" disabled />
-          <span class="switchTrack"></span>
-        </span>
-      </label>
       <button class="btn" id="downloadBtn" title="Download as main.py"><i data-lucide="download"></i> .py</button>
       <button class="btn" id="clearAllBtn" title="New file"><i data-lucide="file-plus"></i> New</button>
       <button class="btn" id="runBtn" disabled>Loading…</button>
+      <button class="btn iconOnly" id="settingsBtn" title="Settings"><i data-lucide="settings"></i></button>
     </div>
   </div>
 
@@ -63,10 +50,44 @@
     <span id="statusText">Booting Python runtime…</span>
     <div class="right">
       <span id="posText">Ln 1, Col 1</span>
+      <span id="pythonVersionText"></span>
     </div>
   </div>
 
 </div>
+
+<dialog id="settingsDialog">
+  <form method="dialog" class="dialogForm">
+    <div class="dialogHeader">
+      <h2><i data-lucide="settings"></i> Settings</h2>
+      <button type="submit" class="iconBtn" title="Close"><i data-lucide="x"></i></button>
+    </div>
+    <div class="dialogBody">
+      <div class="settingRow">
+        <div class="settingLabel">
+          <span>Python version</span>
+          <span class="settingHint">Switching restarts the runtime</span>
+        </div>
+        <select class="btn" id="pythonVersionSelect" disabled>
+          <option value="v0.25.1">Python 3.11</option>
+          <option value="v0.27.2">Python 3.12</option>
+          <option value="v0.29.3" selected>Python 3.13</option>
+          <option value="dev">Python 3.14 (pre-release)</option>
+        </select>
+      </div>
+      <label class="settingRow">
+        <div class="settingLabel">
+          <span><i data-lucide="sparkles"></i> IntelliSense</span>
+          <span class="settingHint">Autocomplete, hover docs &amp; signature help via jedi, running inside Pyodide. Installs on first use.</span>
+        </div>
+        <span class="switch">
+          <input type="checkbox" id="intellisenseToggle" disabled />
+          <span class="switchTrack"></span>
+        </span>
+      </label>
+    </div>
+  </form>
+</dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
 <script type="module" src="/src/main.js"></script>

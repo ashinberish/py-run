@@ -7,8 +7,11 @@ export const dom = {
   statusbar:           document.getElementById('statusbar'),
   statusText:          document.getElementById('statusText'),
   posText:             document.getElementById('posText'),
+  pythonVersionText:   document.getElementById('pythonVersionText'),
   output:              document.getElementById('output'),
   unsavedDot:          document.getElementById('unsavedDot'),
+  settingsBtn:         document.getElementById('settingsBtn'),
+  settingsDialog:      document.getElementById('settingsDialog'),
   intellisenseToggle:  document.getElementById('intellisenseToggle'),
   pythonVersionSelect: document.getElementById('pythonVersionSelect'),
 };
@@ -78,6 +81,10 @@ export function enableIntellisenseToggle() {
 
 export function enablePythonVersionSelect() {
   dom.pythonVersionSelect.disabled = false;
+}
+
+export function setPythonVersionLabel(label) {
+  dom.pythonVersionText.textContent = label;
 }
 
 // Clipboard helper with execCommand fallback for file:// contexts
