@@ -122,6 +122,19 @@ button {
 
 .btn.iconOnly { padding: 6px 8px; }
 
+/* ---- Split button (New file + type dropdown) ---- */
+.splitBtn { position: relative; display: flex; }
+
+.splitBtnMain { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+
+.splitBtnChevron {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: -1px;
+}
+
+.splitBtn .customSelectMenu { min-width: 190px; }
+
 /* ---- Custom select (used for the Python version picker) ----
    A native <select>'s open/focus state can't be restyled to actually match
    the rest of the UI — the browser owns that popup's chrome. This wraps a
@@ -260,6 +273,11 @@ dialog#settingsDialog {
   color: var(--text-main);
   width: min(420px, 92vw);
   box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+  /* <dialog> gets overflow:auto from the UA stylesheet, so once the custom
+     dropdown's popover extends past the dialog's own box it triggers a
+     scrollbar on the whole dialog. Nothing here needs internal scrolling —
+     let the popover overflow visibly like a normal dropdown instead. */
+  overflow: visible;
 }
 
 dialog#settingsDialog[open] {
@@ -391,11 +409,14 @@ label.settingRow { cursor: pointer; }
 #tabstrip {
   display: flex;
   align-items: flex-end;
+  gap: 4px;
   background: var(--bg-panel);
   border-bottom: 1px solid var(--border);
   padding: 0 10px;
   height: 34px;
   flex-shrink: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .tab {
@@ -403,18 +424,28 @@ label.settingRow { cursor: pointer; }
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
   height: 34px;
-  padding: 0 14px;
+  padding: 0 10px 0 14px;
   font-family: var(--mono);
   font-size: 12.5px;
-  color: var(--text-main);
-  background: var(--bg-tab);
-  border: 1px solid var(--border);
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid transparent;
   border-bottom: none;
   border-radius: 6px 6px 0 0;
+  cursor: pointer;
 }
 
-.tab::after {
+.tab:hover { color: var(--text-main); background: var(--hover-bg); }
+
+.tab.active {
+  color: var(--text-main);
+  background: var(--bg-tab);
+  border-color: var(--border);
+}
+
+.tab.active::after {
   content: '';
   position: absolute;
   left: 0; right: 0; bottom: -1px;
@@ -428,8 +459,32 @@ label.settingRow { cursor: pointer; }
   border-radius: 50%;
   background: var(--yellow);
   display: inline-block;
+  flex-shrink: 0;
   transition: opacity .15s ease;
 }
+
+.tab .tabName {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tabClose {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  padding: 3px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tabClose:hover { color: var(--text-main); background: var(--overlay-hover); }
+.tabClose svg { width: 12px; height: 12px; stroke-width: 2.5; }
 
 /* ---- Main split ---- */
 #main {

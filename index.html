@@ -29,18 +29,20 @@
     </div>
     <div id="actions">
       <button class="btn iconOnly" id="settingsBtn" title="Settings"><i data-lucide="settings"></i></button>
-      <button class="btn" id="downloadBtn" title="Download as main.py"><i data-lucide="download"></i> .py</button>
-      <button class="btn" id="clearAllBtn" title="New file"><i data-lucide="file-plus"></i> New</button>
+      <button class="btn" id="downloadBtn" title="Download current file"><i data-lucide="download"></i> .py</button>
+      <div class="splitBtn" id="newFileGroup">
+        <button class="btn splitBtnMain" id="newFileBtn" title="New Python file"><i data-lucide="file-plus"></i> New</button>
+        <button class="btn iconOnly splitBtnChevron" id="newFileMenuBtn" title="New file…"><i data-lucide="chevron-down"></i></button>
+        <div class="customSelectMenu" id="newFileMenu" role="menu">
+          <div class="customSelectOption" role="menuitem" data-lang="python">Python file</div>
+          <div class="customSelectOption" role="menuitem" data-lang="markdown">Markdown file (notes)</div>
+        </div>
+      </div>
       <button class="btn" id="runBtn" disabled>Loading…</button>
     </div>
   </div>
 
-  <div id="tabstrip">
-    <div class="tab">
-      <span class="unsaved" id="unsavedDot" style="opacity:0"></span>
-      main.py
-    </div>
-  </div>
+  <div id="tabstrip"></div>
 
   <div id="main">
     <div id="editorPane"><div id="editor"></div></div>

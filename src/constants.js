@@ -15,6 +15,11 @@ for i in range(3):
     print(f"Line {i}: hello from Pyodide 🐍")
 `;
 
+export const DEFAULT_NOTES_CONTENT = `# Notes
+
+Take notes here — this file isn't executed, it's just for you.
+`;
+
 // Detect Mac vs Win/Linux for keyboard shortcut display
 export const IS_MAC = (() => {
   const platform = (navigator.userAgentData?.platform ?? navigator.platform ?? '').toLowerCase();
