@@ -23,3 +23,23 @@ export const IS_MAC = (() => {
 
 export const SHORTCUT_LABEL = IS_MAC ? '⌘↵' : '⌃↵';
 export const SHORTCUT_TITLE = IS_MAC ? 'Cmd+Enter' : 'Ctrl+Enter';
+
+// Pyodide releases, each bundling one specific CPython build. "dev" tracks
+// Pyodide's rolling dev channel, which is how a pre-release/not-yet-cut
+// CPython (currently 3.14) becomes selectable here.
+export const PYTHON_VERSIONS = [
+  { id: 'v0.25.1', label: 'Python 3.11', python: '3.11.3' },
+  { id: 'v0.27.2', label: 'Python 3.12', python: '3.12.7' },
+  { id: 'v0.29.3', label: 'Python 3.13', python: '3.13.2' },
+  { id: 'dev', label: 'Python 3.14 (pre-release)', python: '3.14.0' },
+];
+
+export const DEFAULT_PYTHON_VERSION = 'v0.29.3';
+
+export function pyodideBaseUrl(versionId) {
+  return 'https://cdn.jsdelivr.net/pyodide/' + versionId + '/full/';
+}
+
+export function pyodideScriptUrl(versionId) {
+  return pyodideBaseUrl(versionId) + 'pyodide.js';
+}

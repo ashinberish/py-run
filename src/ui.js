@@ -3,13 +3,14 @@ import { state } from './state.js';
 import { SHORTCUT_LABEL, SHORTCUT_TITLE } from './constants.js';
 
 export const dom = {
-  runBtn:             document.getElementById('runBtn'),
-  statusbar:          document.getElementById('statusbar'),
-  statusText:         document.getElementById('statusText'),
-  posText:            document.getElementById('posText'),
-  output:             document.getElementById('output'),
-  unsavedDot:         document.getElementById('unsavedDot'),
-  intellisenseToggle: document.getElementById('intellisenseToggle'),
+  runBtn:              document.getElementById('runBtn'),
+  statusbar:           document.getElementById('statusbar'),
+  statusText:          document.getElementById('statusText'),
+  posText:             document.getElementById('posText'),
+  output:              document.getElementById('output'),
+  unsavedDot:          document.getElementById('unsavedDot'),
+  intellisenseToggle:  document.getElementById('intellisenseToggle'),
+  pythonVersionSelect: document.getElementById('pythonVersionSelect'),
 };
 
 export function setStatus(text, busy) {
@@ -62,8 +63,21 @@ export function setRunBtnBusy() {
   dom.runBtn.appendChild(document.createTextNode(' Running…'));
 }
 
+export function setRunBtnLoading() {
+  dom.runBtn.disabled = true;
+  dom.runBtn.innerHTML = '';
+  const spinner = createElement(LoaderCircle);
+  spinner.classList.add('spin');
+  dom.runBtn.appendChild(spinner);
+  dom.runBtn.appendChild(document.createTextNode(' Loading…'));
+}
+
 export function enableIntellisenseToggle() {
   dom.intellisenseToggle.disabled = false;
+}
+
+export function enablePythonVersionSelect() {
+  dom.pythonVersionSelect.disabled = false;
 }
 
 // Clipboard helper with execCommand fallback for file:// contexts

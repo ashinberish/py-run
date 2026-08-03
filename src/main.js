@@ -7,6 +7,7 @@ import { runCode } from './runtime.js';
 import { initEditor } from './editor.js';
 import { enableIntellisense, disableIntellisense } from './intellisense.js';
 import { initIcons } from './icons.js';
+import { savePythonVersion } from './persistence.js';
 
 initIcons();
 
@@ -34,6 +35,15 @@ document.getElementById('copyOutputBtn').addEventListener('click', function () {
       btn.appendChild(createElement(Copy));
     }, 1500);
   });
+});
+
+// Python version — Pyodide has no in-place version switch, and different
+// versions share a couple of window globals (e.g. _createPyodideModule), so
+// the only reliable way to change versions is a full page reload with a
+// clean global scope. The code itself is preserved via localStorage.
+dom.pythonVersionSelect.addEventListener('change', function () {
+  savePythonVersion(this.value);
+  location.reload();
 });
 
 // IntelliSense toggle — off by default; installs jedi into Pyodide on first enable
