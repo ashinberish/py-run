@@ -5,6 +5,49 @@ import {
   setRunBtnReady, setRunBtnBusy, setRunBtnLoading,
   enableIntellisenseToggle, enablePythonVersionSelect, setPythonVersionLabel,
 } from './ui.js';
+import { activeFile, mainFile } from './tabs.js';
+
+const FS_DIR = '/home/pyodide';
+
+// Run always targets a runnable (Python) file: the active tab if it's one,
+// otherwise falling back to main.py (e.g. when a Markdown notes tab is open).
+function targetFile() {
+  const active = activeFile();
+  return active && active.language === 'python' ? active : mainFile();
+}
+
+// Writes every .py file in the session into Pyodide's filesystem so they can
+// import each other as modules, removes any that were closed since the last
+// run, and drops the target's sibling modules from sys.modules so edits to
+// them are picked up on re-run instead of using Python's cached import.
+function syncFilesToFS(pyodide, target) {
+  const FS = pyodide.FS;
+  const pyFiles = state.files.filter((f) => f.language === 'python');
+  const currentNames = new Set(pyFiles.map((f) => f.name));
+
+  for (const name of state.writtenFiles) {
+    if (!currentNames.has(name)) {
+      try { FS.unlink(FS_DIR + '/' + name); } catch (_) { /* already gone */ }
+    }
+  }
+  for (const f of pyFiles) {
+    FS.writeFile(FS_DIR + '/' + f.name, f.model.getValue());
+  }
+  state.writtenFiles = currentNames;
+
+  const moduleNames = pyFiles
+    .filter((f) => f.name !== target.name)
+    .map((f) => f.name.replace(/\.py$/, ''));
+
+  pyodide.runPython(
+    "import sys\n" +
+    "if '" + FS_DIR + "' not in sys.path:\n" +
+    "    sys.path.insert(0, '" + FS_DIR + "')\n" +
+    (moduleNames.length
+      ? 'for _m in ' + JSON.stringify(moduleNames) + ':\n    sys.modules.pop(_m, None)\n'
+      : '')
+  );
+}
 
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -64,13 +107,17 @@ export async function boot(versionId) {
 
 export async function runCode() {
   if (!state.pyodide || state.running) return;
+  const file = targetFile();
+  if (!file) return;
+
   state.running = true;
   setRunBtnBusy();
   setStatus('Running…', true);
   clearOutput();
-  appendSystem('$ python main.py');
+  appendSystem('$ python ' + file.name);
 
-  const code = state.editor ? state.editor.getValue() : '';
+  syncFilesToFS(state.pyodide, file);
+  const code = file.model.getValue();
   const t0 = performance.now();
 
   try {

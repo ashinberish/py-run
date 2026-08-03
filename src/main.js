@@ -2,12 +2,13 @@ import './style.css';
 
 import { createElement, Copy, Check } from 'lucide';
 import { state } from './state.js';
-import { dom, clearOutput, markSaved, copyText, appendSystem, openSettingsDialog, closeSettingsDialog } from './ui.js';
+import { dom, clearOutput, copyText, appendSystem, openSettingsDialog, closeSettingsDialog } from './ui.js';
 import { runCode } from './runtime.js';
 import { initEditor } from './editor.js';
 import { enableIntellisense, disableIntellisense } from './intellisense.js';
 import { initIcons } from './icons.js';
 import { savePythonVersion, saveTheme } from './persistence.js';
+import { createNewFile, activeFile } from './tabs.js';
 
 initIcons();
 
@@ -101,25 +102,43 @@ dom.intellisenseToggle.addEventListener('change', function () {
   }
 });
 
-// New file — confirm if there are unsaved changes
-document.getElementById('clearAllBtn').addEventListener('click', function () {
-  if (state.unsaved && !window.confirm('Discard unsaved changes and start a new file?')) return;
-  if (!state.editor) return;
-  state.suppressUnsaved = true;
-  state.editor.setValue('# New file\n');
-  state.suppressUnsaved = false;
-  markSaved();
-  clearOutput();
+// New file — the main button quick-creates a Python file; the chevron opens
+// a menu to pick Python or Markdown (for notes) explicitly.
+dom.newFileBtn.addEventListener('click', function () {
+  createNewFile('python');
 });
 
-// Download .py
+dom.newFileMenuBtn.addEventListener('click', function (e) {
+  e.stopPropagation();
+  dom.newFileMenu.classList.toggle('open');
+});
+
+dom.newFileMenu.querySelectorAll('[data-lang]').forEach(function (item) {
+  item.addEventListener('click', function () {
+    createNewFile(item.dataset.lang);
+    dom.newFileMenu.classList.remove('open');
+  });
+});
+
+document.addEventListener('click', function (e) {
+  if (dom.newFileMenu.contains(e.target) || dom.newFileMenuBtn.contains(e.target)) return;
+  dom.newFileMenu.classList.remove('open');
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') dom.newFileMenu.classList.remove('open');
+});
+
+// Download the currently open file under its own name
 document.getElementById('downloadBtn').addEventListener('click', function () {
-  if (!state.editor) return;
-  const blob = new Blob([state.editor.getValue()], { type: 'text/x-python' });
+  const file = activeFile();
+  if (!file) return;
+  const mime = file.language === 'markdown' ? 'text/markdown' : 'text/x-python';
+  const blob = new Blob([file.model.getValue()], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'main.py';
+  a.download = file.name;
   a.click();
   URL.revokeObjectURL(url);
 });

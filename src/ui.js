@@ -1,5 +1,4 @@
 import { createElement, Play, LoaderCircle } from 'lucide';
-import { state } from './state.js';
 import { SHORTCUT_LABEL, SHORTCUT_TITLE } from './constants.js';
 import { enhanceSelect } from './customSelect.js';
 
@@ -10,7 +9,10 @@ export const dom = {
   posText:             document.getElementById('posText'),
   pythonVersionText:   document.getElementById('pythonVersionText'),
   output:              document.getElementById('output'),
-  unsavedDot:          document.getElementById('unsavedDot'),
+  tabstrip:            document.getElementById('tabstrip'),
+  newFileBtn:          document.getElementById('newFileBtn'),
+  newFileMenuBtn:      document.getElementById('newFileMenuBtn'),
+  newFileMenu:         document.getElementById('newFileMenu'),
   settingsBtn:         document.getElementById('settingsBtn'),
   settingsDialog:      document.getElementById('settingsDialog'),
   settingsCloseBtn:    document.getElementById('settingsCloseBtn'),
@@ -36,17 +38,6 @@ export function appendLine(text, cls) {
 export function appendSystem(text) { appendLine(text, 'system'); }
 
 export function clearOutput() { dom.output.innerHTML = ''; }
-
-export function markUnsaved() {
-  if (state.suppressUnsaved) return;
-  state.unsaved = true;
-  dom.unsavedDot.style.opacity = 1;
-}
-
-export function markSaved() {
-  state.unsaved = false;
-  dom.unsavedDot.style.opacity = 0;
-}
 
 export function setRunBtnReady() {
   dom.runBtn.disabled = false;
