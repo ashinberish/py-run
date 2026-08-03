@@ -3,7 +3,7 @@ import { SHORTCUT_LABEL, PYTHON_VERSIONS, pyodideScriptUrl, pyodideBaseUrl } fro
 import {
   setStatus, appendSystem, appendLine, clearOutput,
   setRunBtnReady, setRunBtnBusy, setRunBtnLoading,
-  enableIntellisenseToggle, enablePythonVersionSelect,
+  enableIntellisenseToggle, enablePythonVersionSelect, setPythonVersionLabel,
 } from './ui.js';
 
 function loadScript(src) {
@@ -16,9 +16,12 @@ function loadScript(src) {
   });
 }
 
+function pythonVersionEntry(versionId) {
+  return PYTHON_VERSIONS.find((v) => v.id === versionId);
+}
+
 function pythonLabel(versionId) {
-  const entry = PYTHON_VERSIONS.find((v) => v.id === versionId);
-  return entry ? entry.python : versionId;
+  return pythonVersionEntry(versionId)?.python ?? versionId;
 }
 
 export async function boot(versionId) {
@@ -52,6 +55,7 @@ export async function boot(versionId) {
     setRunBtnReady();
     enableIntellisenseToggle();
     enablePythonVersionSelect();
+    setPythonVersionLabel(pythonVersionEntry(versionId)?.label ?? versionId);
   } catch (err) {
     setStatus('Failed to load runtime', false);
     appendLine('Failed to initialize Python runtime: ' + err, 'stderr');

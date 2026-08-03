@@ -103,9 +103,12 @@ select.btn {
 
 select.btn:hover:not(:disabled) { color: var(--text-main); }
 
+.btn.iconOnly { padding: 6px 8px; }
+
 .btn svg,
 .iconBtn svg,
-.switchGroup svg,
+.settingLabel svg,
+.dialogHeader svg,
 #consoleHeader svg {
   width: 14px;
   height: 14px;
@@ -115,27 +118,6 @@ select.btn:hover:not(:disabled) { color: var(--text-main); }
 
 .spin { animation: spin 0.9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-/* ---- IntelliSense toggle ---- */
-.switchGroup {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-dim);
-  cursor: pointer;
-  user-select: none;
-  transition: color .12s ease, border-color .12s ease;
-}
-
-.switchGroup svg { color: var(--yellow); }
-
-.switchGroup:has(input:checked) { color: var(--text-main); border-color: #4a4b52; }
-.switchGroup:has(input:disabled) { opacity: .5; cursor: not-allowed; }
 
 .switch {
   position: relative;
@@ -177,6 +159,91 @@ select.btn:hover:not(:disabled) { color: var(--text-main); }
 
 .switch input:checked + .switchTrack { background: var(--blue); }
 .switch input:checked + .switchTrack::before { transform: translateX(13px); background: #fff; }
+
+/* ---- Settings dialog ---- */
+dialog#settingsDialog {
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-panel);
+  color: var(--text-main);
+  width: min(420px, 92vw);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+}
+
+dialog#settingsDialog::backdrop {
+  background: rgba(0, 0, 0, .5);
+}
+
+.dialogForm { display: flex; flex-direction: column; }
+
+.dialogHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dialogHeader h2 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.dialogHeader h2 svg { color: var(--blue); }
+
+.dialogHeader button {
+  background: none;
+  color: var(--text-dim);
+  padding: 4px;
+  border-radius: 4px;
+  transition: color .1s, background .1s;
+}
+
+.dialogHeader button:hover { color: var(--text-main); background: rgba(255, 255, 255, .06); }
+
+.dialogBody {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 16px;
+}
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: default;
+}
+
+label.settingRow { cursor: pointer; }
+
+.settingLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.settingLabel > span:first-child { display: flex; align-items: center; gap: 6px; }
+.settingLabel svg { color: var(--yellow); }
+
+.settingHint {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-dim);
+}
+
+#pythonVersionText {
+  color: inherit;
+  opacity: .85;
+}
 
 #runBtn {
   background: linear-gradient(90deg, var(--blue), #3f7aa8);

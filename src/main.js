@@ -37,6 +37,15 @@ document.getElementById('copyOutputBtn').addEventListener('click', function () {
   });
 });
 
+// Settings dialog
+dom.settingsBtn.addEventListener('click', function () {
+  dom.settingsDialog.showModal();
+});
+
+dom.settingsDialog.addEventListener('click', function (e) {
+  if (e.target === dom.settingsDialog) dom.settingsDialog.close();
+});
+
 // Python version — Pyodide has no in-place version switch, and different
 // versions share a couple of window globals (e.g. _createPyodideModule), so
 // the only reliable way to change versions is a full page reload with a
