@@ -1,4 +1,5 @@
 import { state } from './state.js';
+import { ensureSysPath, writePythonFiles } from './pyfs.js';
 
 // Runs inside Pyodide. Uses jedi.Interpreter (not jedi.Script) so completions
 // and hovers also see variables/functions the user has already defined by
@@ -110,7 +111,16 @@ function jediKindToMonacoKind(monaco, kind) {
   }
 }
 
+// jedi resolves `import othermodule` via static analysis of files sitting on
+// disk (plus sys.path) — it doesn't need othermodule to have been run first.
+// So sibling .py files need to be written before every completion/hover/
+// signature request, not just before Run, for cross-file IntelliSense on
+// user-defined functions/classes in other session files to work at all.
 function callBridge(name, code, line, column) {
+  const pyFiles = state.files.filter((f) => f.language === 'python');
+  writePythonFiles(state.pyodide, pyFiles);
+  ensureSysPath(state.pyodide);
+
   const fn = state.pyodide.globals.get(name);
   try {
     return JSON.parse(fn(code, line, column));

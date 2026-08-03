@@ -470,6 +470,18 @@ label.settingRow { cursor: pointer; }
   white-space: nowrap;
 }
 
+.tabRenameInput {
+  width: 130px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--text-main);
+  background: var(--bg-app);
+  border: 1px solid var(--blue);
+  border-radius: 3px;
+  padding: 1px 4px;
+  outline: none;
+}
+
 .tabClose {
   display: inline-flex;
   align-items: center;

@@ -6,8 +6,7 @@ import {
   enableIntellisenseToggle, enablePythonVersionSelect, setPythonVersionLabel,
 } from './ui.js';
 import { activeFile, mainFile } from './tabs.js';
-
-const FS_DIR = '/home/pyodide';
+import { PY_FS_DIR, ensureSysPath, writePythonFiles } from './pyfs.js';
 
 // Run always targets a runnable (Python) file: the active tab if it's one,
 // otherwise falling back to main.py (e.g. when a Markdown notes tab is open).
@@ -18,8 +17,12 @@ function targetFile() {
 
 // Writes every .py file in the session into Pyodide's filesystem so they can
 // import each other as modules, removes any that were closed since the last
-// run, and drops the target's sibling modules from sys.modules so edits to
-// them are picked up on re-run instead of using Python's cached import.
+// run, and invalidates sys.modules for every module besides the one being
+// run. That covers both "edited a helper, re-run" (stale cached bytecode)
+// and "closed a helper that's still imported elsewhere" — without this, a
+// module removed from disk but already successfully imported once stays
+// cached in sys.modules, so `import closed_helper` keeps silently working
+// off the last-known copy instead of raising ModuleNotFoundError.
 function syncFilesToFS(pyodide, target) {
   const FS = pyodide.FS;
   const pyFiles = state.files.filter((f) => f.language === 'python');
@@ -27,26 +30,23 @@ function syncFilesToFS(pyodide, target) {
 
   for (const name of state.writtenFiles) {
     if (!currentNames.has(name)) {
-      try { FS.unlink(FS_DIR + '/' + name); } catch (_) { /* already gone */ }
+      try { FS.unlink(PY_FS_DIR + '/' + name); } catch (_) { /* already gone */ }
     }
   }
-  for (const f of pyFiles) {
-    FS.writeFile(FS_DIR + '/' + f.name, f.model.getValue());
-  }
+  writePythonFiles(pyodide, pyFiles);
+
+  const staleAndCurrent = new Set([...state.writtenFiles, ...currentNames]);
+  staleAndCurrent.delete(target.name);
+  const moduleNames = [...staleAndCurrent].map((name) => name.replace(/\.py$/, ''));
+
   state.writtenFiles = currentNames;
 
-  const moduleNames = pyFiles
-    .filter((f) => f.name !== target.name)
-    .map((f) => f.name.replace(/\.py$/, ''));
-
-  pyodide.runPython(
-    "import sys\n" +
-    "if '" + FS_DIR + "' not in sys.path:\n" +
-    "    sys.path.insert(0, '" + FS_DIR + "')\n" +
-    (moduleNames.length
-      ? 'for _m in ' + JSON.stringify(moduleNames) + ':\n    sys.modules.pop(_m, None)\n'
-      : '')
-  );
+  ensureSysPath(pyodide);
+  if (moduleNames.length) {
+    pyodide.runPython(
+      'import sys\nfor _m in ' + JSON.stringify(moduleNames) + ':\n    sys.modules.pop(_m, None)\n'
+    );
+  }
 }
 
 function loadScript(src) {
